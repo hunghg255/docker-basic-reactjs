@@ -1,0 +1,17 @@
+version: '3'
+services:
+  react-app:
+    # stdin_open: true
+    # tty: true
+    # build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      args:
+        - REACT_APP_NAME=DockerReactProduction
+    volumes:
+      - ./src:/app/src
+    ports:
+      - '8080:80'
+    # environment:
+    #   - REACT_APP_NAME=DockerReactProduction

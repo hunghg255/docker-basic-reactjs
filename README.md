@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+# Docker reactjs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Build a image with Dockerfile
 
-## Available Scripts
+```js
+docker build
+docker build -f FILE_NAME_DOCKER
+docker build -f FILE_NAME_DOCKER -t IMAGE_NAME .
+// docker build -f Dockerfile.dev
+```
 
-In the project directory, you can run:
+## Build a cache latest
 
-### `npm start`
+```js
+docker build -t IMAGE_NAME .
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## List image
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```js
+docker image ls
+```
 
-### `npm test`
+## Delete a image
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
+docker image rm IMAGE_ID
+```
 
-### `npm run build`
+## Run container
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```js
+docker run -d IMAGE_NAME
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+docker run -d --name CONTAINER_NAME IMAGE_NAME
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Check container running
 
-### `npm run eject`
+```js
+docker ps
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Remove container is running
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js
+docker rm CONTAINER_NAME -f
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Run container with Docker networking, forwarding ports
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```js
+docker run -d -p PORT_APP_FORWARDING:PORT_APP --name CONTAINER_NAME IMAGE_NAME
 
-## Learn More
+// reactjs local port 3000 => forwarding port 4000 => 4000:3000
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+// env
+docker run --env-file ./.env -d -p 8080:80 --name CONTAINER_NAME IMAGE_NAME
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Access machine, Bind mount to sync source code
 
-### Code Splitting
+```js
+docker exec -it CONTAINER_NAME bash
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+// Khi content app thay đổi thì lại build lại content ở container or là vào thẳng container để sửa
+// volumes, đồng bộ data khi thay đổi ở local
 
-### Analyzing the Bundle Size
+docker run -v dirLocalDirectory:containerDirectory -d -p PORT_APP_FORWARDING:PORT_APP --name CONTAINER_NAME IMAGE_NAME
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# Docker compose
 
-### Making a Progressive Web App
+## Run docker compose
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```js
+// auto create a image
+docker-compose up -d
 
-### Advanced Configuration
+// recreating
+docker-compose up -d --build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml down
 
-### Deployment
+docker-compose -f docker-compose.yml -f docker-compose-prod.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose-prod.yml down
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Stop docker compose
 
-### `npm run build` fails to minify
+```js
+docker-compose down
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Multi-stage build production with NGINX
+
+```js
+// env
+docker run --env-file ./.env -d -p 8080:80 --name CONTAINER_NAME IMAGE_NAME
+```
+
+# Development and production workflow
